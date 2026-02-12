@@ -6,6 +6,8 @@ contract StorageProxy is Ownable {
     uint public num ;
     address implementation ;
 
+
+    event FallbackCalled() ;
     constructor(address _implementation ) Ownable(msg.sender){
         num = 0 ;
         implementation = _implementation;
@@ -21,6 +23,12 @@ contract StorageProxy is Ownable {
     function setImplementation(address _implementation ) onlyOwner  public {
         implementation = _implementation ;
     }
+
+    fallback() external  {
+        emit FallbackCalled() ;
+        (bool success , ) = implementation.delegatecall(msg.data) ;
+        require(success , "something went wrong ");
+     }
 }
 
 contract Implementation1{
@@ -39,5 +47,14 @@ contract Implementation2{
     constructor() {}
     function setNum(uint _num ) public  {
         num = _num * 2 ;
+    }
+}
+contract Implementation3{
+    address public owner ; 
+    uint public num ;
+    constructor() {}
+
+    function divideNum(uint _num ) public  {
+        num = num * 10000 * _num ;
     }
 }
