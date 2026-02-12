@@ -7,6 +7,8 @@ contract SubCoin{
     mapping (address => uint ) balances ;
     mapping (address => mapping (address => uint )) public allowances ;
     uint public totalsupply ;
+
+    event Transfer(address indexed  from , address indexed  to , uint value ) ;
     modifier  onlyOwner{
         require(msg.sender == owner );
         _;
@@ -20,6 +22,9 @@ contract SubCoin{
         owner = msg.sender ;
     }
 
+    function getBalance()public view returns (uint){
+        return balances[msg.sender] ;
+    }
 
     function mint (uint _amount ) public onlyOwner {
         balances[owner] += _amount ;
@@ -35,6 +40,7 @@ contract SubCoin{
         require(balances[msg.sender] >= _amount);
         balances[msg.sender] -= _amount ;
         balances[_address] += _amount ;
+        emit Transfer(msg.sender, _address, _amount );
     }
 
     function approve(address _spender , uint _value ) public  returns(bool) {

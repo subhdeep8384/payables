@@ -1,29 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.7.0 <0.9.0;
 
-pragma solidity >=0.8.2 <0.9.0;
+interface IImplementation {
+    function setNum(uint _num) external;
+    function num() external view returns (uint);
+}
 
-/**
- * @title Storage
- * @dev Store & retrieve value in a variable
- * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
- */
 contract Storage {
+    uint public num; 
+    address public implementation;
 
-    uint256 number;
-
-    /**
-     * @dev Store value in variable
-     * @param num value to store
-     */
-    function store(uint256 num) public {
-        number = num;
+    constructor(address _implementation) {
+        num = 0;
+        implementation = _implementation;
     }
 
+    function setNum(uint _num) public {
+        IImplementation(implementation).setNum(_num);
+    }
+}
+
+contract Implementation {
+    uint public num;
+
     /**
-     * @dev Return value 
-     * @return value of 'number'
+     * @dev Sets the `num` in the Implementation contract's own storage.
      */
-    function retrieve() public view returns (uint256){
-        return number;
+    function setNum(uint _num) public {
+        num = _num;
     }
 }
